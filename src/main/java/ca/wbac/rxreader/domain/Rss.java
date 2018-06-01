@@ -1,17 +1,13 @@
 package ca.wbac.rxreader.domain;
 
-import com.rometools.rome.feed.synd.SyndFeed;
-import com.rometools.rome.io.SyndFeedInput;
-import com.rometools.rome.io.XmlReader;
-import io.reactivex.Observable;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.net.URL;
-
+@Data
+@NoArgsConstructor
 public class Rss {
+    private String link;
 
-    public static Observable<SyndFeed> fetch(Observable<String> source) {
-        return source.map(URL::new)
-                .map(XmlReader::new)
-                .map(xmlReader -> new SyndFeedInput().build(xmlReader));
-    }
+    private String title;
+    private String description;
 }
