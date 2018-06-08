@@ -6,33 +6,43 @@ import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 import io.reactivex.Observable;
-import lombok.AllArgsConstructor;
+import io.reactivex.subjects.PublishSubject;
 import org.mapstruct.Mapper;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.net.URL;
+
+import static ca.wbac.rxreader.utils.FunctionalHelpers.applySideEffects;
+
+@Component
+final class RssEffects {
+    static final PublishSubject<Rss> rssFeed$ = PublishSubject.create();
+
+    RssEffects(RssMapper rssMapper, RssFeedRepository rssFeedRepository) {
+        Observable<Rss> feedSource$ = fetchFeeds(rssMapper);
+        applySideEffects(feedSource$, rssFeed$::onNext, rssFeedRepository::save);
+    }
+
+    private Observable<Rss> fetchFeeds(RssMapper rssMapper) {
+        return RssResource.rssRequest$
+                .map(this::fetchFeed)
+                .map(rssMapper::syndFeedToRss);
+    }
+
+    private SyndFeed fetchFeed(String href) throws IOException, FeedException {
+        return new SyndFeedInput().build(new XmlReader(new URL(href)));
+    }
+}
 
 @Mapper(componentModel = "spring")
 interface RssMapper {
     Rss syndFeedToRss(SyndFeed syndFeed);
 }
 
-@Component
-@AllArgsConstructor
-final class RssEffects {
-
-    private final RssMapper rssMapper;
-    private final SyndFeedInput syndFeedInput;
-
-    Observable<Rss> request(String href) {
-        return Observable.just(href)
-                .map(this::fetchFeed)
-                .map(rssMapper::syndFeedToRss);
-    }
-
-    private SyndFeed fetchFeed(String href) throws IOException, FeedException {
-        return this.syndFeedInput.build(new XmlReader(new URL(href)));
-    }
-}
-
+@Transactional
+@Repository
+interface RssFeedRepository extends JpaRepository<Rss, String> {}
