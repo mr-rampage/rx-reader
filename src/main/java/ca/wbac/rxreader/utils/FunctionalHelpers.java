@@ -1,15 +1,13 @@
 package ca.wbac.rxreader.utils;
 
-import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 import java.util.Arrays;
-import java.util.function.Consumer;
 
 final public class FunctionalHelpers {
     @SafeVarargs
-    public static <T> Disposable applySideEffects(final Observable<T> source$, Consumer<T>... sideEffects) {
-        return source$.subscribe(value -> Arrays.stream(sideEffects)
-                .forEach(sideEffect -> sideEffect.accept(value)));
+    public static <T> Consumer<T> applySideEffects(final java.util.function.Consumer<T>... sideEffects) {
+        return value -> Arrays.stream(sideEffects)
+                .forEach(sideEffects1 -> sideEffects1.accept(value));
     }
 }
