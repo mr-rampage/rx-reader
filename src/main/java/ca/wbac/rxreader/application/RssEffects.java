@@ -16,6 +16,7 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.net.URL;
 
+import static ca.wbac.rxreader.application.RssResource.rssRequest$;
 import static ca.wbac.rxreader.utils.FunctionalHelpers.applySideEffects;
 
 @Component
@@ -23,17 +24,17 @@ final class RssEffects {
     static final PublishSubject<Rss> rssFeed$ = PublishSubject.create();
 
     RssEffects(RssMapper rssMapper, RssFeedRepository rssFeedRepository) {
-        Observable<Rss> feedSource$ = fetchFeeds(rssMapper);
+        Observable<Rss> feedSource$ = feed(rssRequest$, rssMapper);
         applySideEffects(feedSource$, rssFeed$::onNext, rssFeedRepository::save);
     }
 
-    private Observable<Rss> fetchFeeds(RssMapper rssMapper) {
-        return RssResource.rssRequest$
-                .map(this::fetchFeed)
+    private static Observable<Rss> feed(Observable<String> source$, RssMapper rssMapper) {
+        return source$
+                .map(RssEffects::fetchFeed)
                 .map(rssMapper::syndFeedToRss);
     }
 
-    private SyndFeed fetchFeed(String href) throws IOException, FeedException {
+    private static SyndFeed fetchFeed(String href) throws IOException, FeedException {
         return new SyndFeedInput().build(new XmlReader(new URL(href)));
     }
 }
