@@ -2,12 +2,11 @@ package ca.wbac.rxreader.driver;
 
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Predicate;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 import lombok.NonNull;
 import org.springframework.stereotype.Component;
-
-import static ca.wbac.rxreader.utils.ActionHelpers.isResponseFor;
 
 @Component
 public final class RestDriver {
@@ -16,7 +15,7 @@ public final class RestDriver {
 
     public Observable<ActionResponse> publish(@NonNull final Intent intent) {
         source$.onNext(intent);
-        return sink$.filter(isResponseFor(intent)).take(1).hide();
+        return sink$.hide().filter(isResponseFor(intent)).take(1);
     }
 
     public <T extends Intent> Observable<T> source$(Class<T> clazz) {
@@ -27,5 +26,9 @@ public final class RestDriver {
 
     public Disposable publish(@NonNull final Observable<ActionResponse> sink) {
         return sink.subscribe(sink$::onNext);
+    }
+
+    private Predicate<ActionResponse> isResponseFor(final Intent intent) {
+        return actionResponse -> actionResponse.getSource().equals(intent);
     }
 }

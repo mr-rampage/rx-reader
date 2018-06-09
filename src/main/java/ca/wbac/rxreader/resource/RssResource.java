@@ -1,7 +1,7 @@
 package ca.wbac.rxreader.resource;
 
 import ca.wbac.rxreader.driver.RestDriver;
-import ca.wbac.rxreader.utils.ActionHelpers;
+import ca.wbac.rxreader.utils.ResponseHelpers;
 import ca.wbac.rxreader.application.intent.FetchRss;
 import ca.wbac.rxreader.application.intent.ListSubscriptions;
 import io.reactivex.Observable;
@@ -17,13 +17,13 @@ final class RssResource {
     @PostMapping("/subscribe")
     Observable subscribeRss(@RequestBody final String href) {
         return restDriver.publish(new FetchRss(href))
-                .map(ActionHelpers::respondOrBadRequest);
+                .map(ResponseHelpers::respondOrBadRequest);
     }
 
     @GetMapping("/subscribed")
     Observable subscribedFeeds() {
         return restDriver.publish(new ListSubscriptions())
-                .map(ActionHelpers::respondOrBadRequest);
+                .map(ResponseHelpers::respondOrBadRequest);
     }
 
 }
