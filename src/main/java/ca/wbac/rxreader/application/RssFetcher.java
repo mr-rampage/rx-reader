@@ -10,7 +10,6 @@ import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 interface RssFetcher {

@@ -1,11 +1,11 @@
 package ca.wbac.rxreader.application;
 
-import ca.wbac.rxreader.domain.Rss;
-import ca.wbac.rxreader.domain.RssFeedRepository;
-import ca.wbac.rxreader.driver.RestDriver;
-import ca.wbac.rxreader.driver.ActionResponse;
 import ca.wbac.rxreader.application.intent.FetchRss;
 import ca.wbac.rxreader.application.intent.ListSubscriptions;
+import ca.wbac.rxreader.domain.Rss;
+import ca.wbac.rxreader.domain.RssFeedRepository;
+import ca.wbac.rxreader.driver.ActionResponse;
+import ca.wbac.rxreader.driver.RestDriver;
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
 import io.vavr.control.Try;

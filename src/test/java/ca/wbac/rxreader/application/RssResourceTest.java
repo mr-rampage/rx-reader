@@ -1,11 +1,12 @@
 package ca.wbac.rxreader.application;
 
-import static io.reactivex.marble.junit.MarbleRule.*;
-
 import io.reactivex.Observable;
 import io.reactivex.marble.junit.MarbleRule;
 import org.junit.Rule;
 import org.junit.Test;
+
+import static io.reactivex.marble.junit.MarbleRule.expectObservable;
+import static io.reactivex.marble.junit.MarbleRule.hot;
 
 public class RssResourceTest {
 
