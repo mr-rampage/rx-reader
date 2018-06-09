@@ -1,11 +1,11 @@
-package ca.wbac.rxreader.application.actions;
+package ca.wbac.rxreader.application.intent;
 
-import ca.wbac.rxreader.driver.Intention;
+import ca.wbac.rxreader.driver.Intent;
 import lombok.Getter;
 import lombok.NonNull;
 
 @Getter
-public class FetchRss implements Intention {
+public class FetchRss implements Intent {
     private String href;
 
     public FetchRss(@NonNull String href) {

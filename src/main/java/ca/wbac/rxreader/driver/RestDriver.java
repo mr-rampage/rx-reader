@@ -11,15 +11,15 @@ import static ca.wbac.rxreader.utils.ActionHelpers.isResponseFor;
 
 @Component
 public final class RestDriver {
-    private final PublishSubject<Intention> source$ = PublishSubject.create();
+    private final PublishSubject<Intent> source$ = PublishSubject.create();
     private final BehaviorSubject<ActionResponse> sink$ = BehaviorSubject.create();
 
-    public Observable<ActionResponse> publish(@NonNull final Intention intention) {
-        source$.onNext(intention);
-        return sink$.filter(isResponseFor(intention)).take(1).hide();
+    public Observable<ActionResponse> publish(@NonNull final Intent intent) {
+        source$.onNext(intent);
+        return sink$.filter(isResponseFor(intent)).take(1).hide();
     }
 
-    public <T extends Intention> Observable<T> source$(Class<T> clazz) {
+    public <T extends Intent> Observable<T> source$(Class<T> clazz) {
         return source$.hide()
                 .filter(clazz::isInstance)
                 .map(clazz::cast);

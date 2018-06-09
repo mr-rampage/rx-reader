@@ -2,8 +2,8 @@ package ca.wbac.rxreader.resource;
 
 import ca.wbac.rxreader.driver.RestDriver;
 import ca.wbac.rxreader.utils.ActionHelpers;
-import ca.wbac.rxreader.application.actions.FetchRss;
-import ca.wbac.rxreader.application.actions.ListSubscriptions;
+import ca.wbac.rxreader.application.intent.FetchRss;
+import ca.wbac.rxreader.application.intent.ListSubscriptions;
 import io.reactivex.Observable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

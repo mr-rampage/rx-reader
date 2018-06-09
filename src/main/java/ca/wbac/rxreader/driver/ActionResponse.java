@@ -7,6 +7,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ActionResponse<T> {
-    private final Intention source;
+    private final Intent source;
     private final Try<T> response;
 }
