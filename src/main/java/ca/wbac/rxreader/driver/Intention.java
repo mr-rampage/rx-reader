@@ -1,8 +1,8 @@
-package ca.wbac.rxreader.resource.actions;
+package ca.wbac.rxreader.driver;
 
 import io.vavr.control.Try;
 
-public interface Action {
+public interface Intention {
 
     default <T> ActionResponse<T> respondWith(Try<T> response){
         return new ActionResponse<>(this, response);
