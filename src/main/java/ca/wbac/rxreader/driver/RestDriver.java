@@ -15,7 +15,7 @@ public final class RestDriver implements Driver {
     private final PublishSubject<Intent> source$ = PublishSubject.create();
     private final BehaviorSubject<ActionResponse> sink$ = BehaviorSubject.create();
 
-    public final CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     @Override
     public Observable<ActionResponse> publish(@NonNull final Intent intent) {
