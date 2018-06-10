@@ -8,7 +8,7 @@ import org.junit.Test;
 import static io.reactivex.marble.junit.MarbleRule.expectObservable;
 import static io.reactivex.marble.junit.MarbleRule.hot;
 
-public class RssResourceTest {
+public class FeedResourceTest {
 
     @Rule
     public MarbleRule marble = new MarbleRule();

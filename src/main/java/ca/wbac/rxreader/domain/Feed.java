@@ -8,10 +8,10 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "rss_feeds")
+@Table(name = "subscriptions")
 @Data
 @NoArgsConstructor
-public class Rss {
+public class Feed {
     @Id
     private String link;
 
