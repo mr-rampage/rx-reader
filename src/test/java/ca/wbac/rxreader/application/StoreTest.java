@@ -1,7 +1,8 @@
 package ca.wbac.rxreader.application;
 
-import ca.wbac.rxreader.application.intent.FetchRss;
+import ca.wbac.rxreader.application.intent.ListSubscriptions;
 import ca.wbac.rxreader.domain.Feed;
+import ca.wbac.rxreader.domain.SubscriptionRepository;
 import ca.wbac.rxreader.driver.ActionResponse;
 import ca.wbac.rxreader.driver.Driver;
 import io.reactivex.Observable;
@@ -15,6 +16,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Collections;
+import java.util.List;
+
 import static io.reactivex.marble.MapHelper.of;
 import static io.reactivex.marble.junit.MarbleRule.expectObservable;
 import static io.reactivex.marble.junit.MarbleRule.hot;
@@ -24,10 +28,10 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SubscriptionTest {
-    private final String FEED_URL = "http://feed.com/rss";
+public class StoreTest {
+    private final ListSubscriptions ACTION = new ListSubscriptions();
     private final Feed FEED = new Feed();
-    private final FetchRss ACTION = new FetchRss(FEED_URL);
+    private final List<Feed> SUBSCRIPTIONS = Collections.singletonList(FEED);
 
     @Rule
     public MarbleRule marble = new MarbleRule();
@@ -35,33 +39,33 @@ public class SubscriptionTest {
     private ArgumentCaptor<Observable<ActionResponse<Feed>>> observableCaptor;
 
     private Driver driver;
-    private Subscription fixture;
+    private SubscriptionRepository subscriptionRepository;
+    private Source subscription;
 
     @Before
-    public void setup() throws Exception {
-        RssFetcher fetcher = mock(RssFetcher.class);
-        given(fetcher.fetch(eq(FEED_URL))).willReturn(FEED);
-
+    public void setup() {
         driver = mock(Driver.class);
-        Observable<FetchRss> action$ = hot("--a--", of("a", ACTION));
-        given(driver.source$(eq(FetchRss.class))).willReturn(action$);
+        Observable<ListSubscriptions> action$ = hot("--a--", of("a", ACTION));
+        given(driver.source$(eq(ListSubscriptions.class))).willReturn(action$);
 
-        fixture = new Subscription(driver, fetcher);
+        subscriptionRepository = mock(SubscriptionRepository.class);
+        given(subscriptionRepository.findAll()).willReturn(SUBSCRIPTIONS);
+
+        subscription = mock(Source.class);
+        Observable<Feed> feedSource$ = hot("---a--", of("a", FEED));
+        given(subscription.source$()).willReturn(feedSource$);
+
+        new Store(driver, subscription, subscriptionRepository);
     }
 
     @Test
-    public void shouldEmitFeed_onFetchRssAction() {
-        expectObservable(fixture.source$()).toBe("--a--", of("a", FEED));
-    }
-
-    @Test
-    public void shouldPublishFeedsToDriver_onFetchRssAction() {
+    public void shouldPublishSubscriptionsToDriver_onFetchRssAction() {
         then(driver).should().publish(observableCaptor.capture());
         verifyActionResponse(observableCaptor.getValue());
     }
 
     private void verifyActionResponse(Observable<ActionResponse<Feed>> published$) {
         expectObservable(published$.map(ActionResponse::getSource)).toBe("--a--", of("a", ACTION));
-        expectObservable(published$.map(ActionResponse::getResponse).map(Try::get)).toBe("--a--", of("a", FEED));
+        expectObservable(published$.map(ActionResponse::getResponse).map(Try::get)).toBe("--a--", of("a", SUBSCRIPTIONS));
     }
 }

@@ -9,9 +9,9 @@ import io.reactivex.Observable;
 import io.vavr.control.Try;
 import org.springframework.stereotype.Component;
 
-@Component
-final class Subscription {
-    final Observable<Feed> source$;
+@Component("subscription")
+final class Subscription implements Source {
+    private final Observable<Feed> source$;
     private final RssFetcher rssFetcher;
 
     Subscription(final Driver restDriver, final RssFetcher rssFetcher) {
@@ -22,6 +22,11 @@ final class Subscription {
         restDriver.publish(respond(action$, subscription$));
 
         this.source$ = subscription$.filter(Try::isSuccess).map(Try::get);
+    }
+
+    @Override
+    public Observable<Feed> source$() {
+        return source$;
     }
 
     private Observable<FetchRss> intent(final Driver driver) {

@@ -16,14 +16,14 @@ import java.util.List;
 final class Store {
     private final SubscriptionRepository subscriptionRepository;
 
-    Store(final Driver restDriver, final Subscription subscription, final SubscriptionRepository subscriptionRepository) {
+    Store(final Driver restDriver, final Source subscription, final SubscriptionRepository subscriptionRepository) {
         this.subscriptionRepository = subscriptionRepository;
 
         Observable<ListSubscriptions> action$ = intent(restDriver);
         Observable<Try<List<Feed>>> subscription$ = model(action$);
         restDriver.publish(respond(action$, subscription$));
 
-        subscription.source$.subscribe(subscriptionRepository::save);
+        subscription.source$().subscribe(subscriptionRepository::save);
     }
 
     private Observable<ListSubscriptions> intent(final Driver driver) {
