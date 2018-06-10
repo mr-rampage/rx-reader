@@ -1,35 +1,39 @@
 package ca.wbac.rxreader.application;
 
 import ca.wbac.rxreader.application.intent.FetchRss;
-import ca.wbac.rxreader.application.intent.ListSubscriptions;
 import ca.wbac.rxreader.domain.Rss;
-import ca.wbac.rxreader.domain.RssFeedRepository;
 import ca.wbac.rxreader.driver.ActionResponse;
-import ca.wbac.rxreader.driver.RestDriver;
+import ca.wbac.rxreader.driver.Driver;
+import ca.wbac.rxreader.driver.Intent;
 import io.reactivex.Observable;
-import io.reactivex.functions.Consumer;
 import io.vavr.control.Try;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
-import static ca.wbac.rxreader.utils.FunctionalHelpers.applySideEffects;
-
 @Component
 final class RssActions {
-    RssActions(RestDriver restDriver, RssFetcher rssFetcher, RssFeedRepository rssFeedRepository) {
-        Consumer<ActionResponse<Rss>> persistRss = actionResponse ->
-                actionResponse.getResponse().onSuccess(applySideEffects(rssFeedRepository::save));
+    final Observable<Rss> subscriptionSource$;
+    private final RssFetcher rssFetcher;
 
-        Observable<ActionResponse<Rss>> newFeed$ = restDriver.source$(FetchRss.class)
-                .map(fetchRss -> fetchRss.respondWith(Try.of(() -> rssFetcher.fetch(fetchRss.getHref()))))
-                .doOnNext(persistRss);
+    RssActions(final Driver restDriver, final RssFetcher rssFetcher) {
+        this.rssFetcher = rssFetcher;
 
-        Observable<ActionResponse<List<Rss>>> subscriptionList$ = restDriver.source$(ListSubscriptions.class)
-                .map(action -> action.respondWith(Try.of(rssFeedRepository::findAll)));
+        Observable<FetchRss> intent$ = intent(restDriver);
+        Observable<Try<Rss>> subscription$ = model(intent$);
+        restDriver.publish(respond(intent$, subscription$));
 
+        this.subscriptionSource$ = subscription$.filter(Try::isSuccess).map(Try::get);
+    }
 
-        restDriver.publish(Observable.merge(newFeed$, subscriptionList$));
+    private Observable<FetchRss> intent(final Driver driver) {
+        return driver.source$(FetchRss.class);
+    }
+
+    private Observable<Try<Rss>> model(final Observable<FetchRss> intent$) {
+        return intent$.map(fetchRss -> Try.of(() -> rssFetcher.fetch(fetchRss.getHref())));
+    }
+
+    private Observable<ActionResponse<Rss>> respond(final Observable<FetchRss> intent$, final Observable<Try<Rss>> response$) {
+        return Observable.combineLatest(intent$, response$, Intent::respondWith);
     }
 }
 
