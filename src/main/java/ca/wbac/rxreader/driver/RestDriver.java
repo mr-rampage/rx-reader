@@ -3,6 +3,7 @@ package ca.wbac.rxreader.driver;
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Predicate;
+import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 import lombok.NonNull;
@@ -27,7 +28,8 @@ public final class RestDriver implements Driver {
     public <T extends Intent> Observable<T> source$(Class<T> clazz) {
         return source$.hide()
                 .filter(clazz::isInstance)
-                .map(clazz::cast);
+                .map(clazz::cast)
+                .observeOn(Schedulers.newThread());
     }
 
     @Override
