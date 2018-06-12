@@ -12,17 +12,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/rss")
 @RequiredArgsConstructor
 final class RssResource {
-    private final Driver restDriver;
+    private final Driver rssDriver;
 
     @PostMapping("/subscribe")
     Observable subscribeRss(@RequestBody final String href) {
-        return restDriver.publish(new FetchRss(href))
+        return rssDriver.publish(new FetchRss(href))
                 .map(ResponseHelpers::respondOrBadRequest);
     }
 
     @GetMapping("/subscriptions")
     Observable subscribedFeeds() {
-        return restDriver.publish(new ListSubscriptions())
+        return rssDriver.publish(new ListSubscriptions())
                 .map(ResponseHelpers::respondOrBadRequest);
     }
 
