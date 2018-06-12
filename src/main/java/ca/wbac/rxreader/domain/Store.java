@@ -1,8 +1,7 @@
-package ca.wbac.rxreader.application;
+package ca.wbac.rxreader.domain;
 
-import ca.wbac.rxreader.application.intent.ListSubscriptions;
-import ca.wbac.rxreader.domain.Feed;
-import ca.wbac.rxreader.domain.SubscriptionRepository;
+import ca.wbac.rxreader.application.SubscriptionRepository;
+import ca.wbac.rxreader.domain.intent.ListSubscriptions;
 import ca.wbac.rxreader.driver.ActionResponse;
 import ca.wbac.rxreader.driver.Driver;
 import ca.wbac.rxreader.driver.Intent;
@@ -16,12 +15,12 @@ import java.util.List;
 final class Store {
     private final SubscriptionRepository subscriptionRepository;
 
-    Store(final Driver restDriver, final Source subscription, final SubscriptionRepository subscriptionRepository) {
+    Store(final Driver rssDriver, final Source subscription, final SubscriptionRepository subscriptionRepository) {
         this.subscriptionRepository = subscriptionRepository;
 
-        Observable<ListSubscriptions> action$ = intent(restDriver);
+        Observable<ListSubscriptions> action$ = intent(rssDriver);
         Observable<Try<List<Feed>>> subscription$ = model(action$);
-        restDriver.publish(respond(action$, subscription$));
+        rssDriver.publish(respond(action$, subscription$));
 
         subscription.source$().subscribe(subscriptionRepository::save);
     }

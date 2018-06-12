@@ -1,7 +1,6 @@
-package ca.wbac.rxreader.application;
+package ca.wbac.rxreader.domain;
 
-import ca.wbac.rxreader.application.intent.FetchRss;
-import ca.wbac.rxreader.domain.Feed;
+import ca.wbac.rxreader.domain.intent.FetchRss;
 import ca.wbac.rxreader.driver.ActionResponse;
 import ca.wbac.rxreader.driver.Driver;
 import ca.wbac.rxreader.driver.Intent;
@@ -14,12 +13,12 @@ final class Subscription implements Source {
     private final Observable<Feed> source$;
     private final RssFetcher rssFetcher;
 
-    Subscription(final Driver restDriver, final RssFetcher rssFetcher) {
+    Subscription(final Driver rssDriver, final RssFetcher rssFetcher) {
         this.rssFetcher = rssFetcher;
 
-        Observable<FetchRss> action$ = intent(restDriver);
+        Observable<FetchRss> action$ = intent(rssDriver);
         Observable<Try<Feed>> subscription$ = model(action$);
-        restDriver.publish(respond(action$, subscription$));
+        rssDriver.publish(respond(action$, subscription$));
 
         this.source$ = subscription$.filter(Try::isSuccess).map(Try::get);
     }

@@ -1,8 +1,7 @@
-package ca.wbac.rxreader.application;
+package ca.wbac.rxreader.domain;
 
-import ca.wbac.rxreader.application.intent.ListSubscriptions;
-import ca.wbac.rxreader.domain.Feed;
-import ca.wbac.rxreader.domain.SubscriptionRepository;
+import ca.wbac.rxreader.application.SubscriptionRepository;
+import ca.wbac.rxreader.domain.intent.ListSubscriptions;
 import ca.wbac.rxreader.driver.ActionResponse;
 import ca.wbac.rxreader.driver.Driver;
 import io.reactivex.Observable;

@@ -1,4 +1,4 @@
-package ca.wbac.rxreader.application.intent;
+package ca.wbac.rxreader.domain.intent;
 
 import ca.wbac.rxreader.driver.Intent;
 import lombok.Getter;

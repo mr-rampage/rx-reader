@@ -1,7 +1,6 @@
-package ca.wbac.rxreader.application;
+package ca.wbac.rxreader.domain;
 
-import ca.wbac.rxreader.application.intent.FetchRss;
-import ca.wbac.rxreader.domain.Feed;
+import ca.wbac.rxreader.domain.intent.FetchRss;
 import ca.wbac.rxreader.driver.ActionResponse;
 import ca.wbac.rxreader.driver.Driver;
 import io.reactivex.Observable;

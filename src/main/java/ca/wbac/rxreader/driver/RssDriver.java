@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
 
-@Component("restDriver")
-public final class RestDriver implements Driver {
+@Component("rssDriver")
+public final class RssDriver implements Driver {
     private final PublishSubject<Intent> source$ = PublishSubject.create();
     private final BehaviorSubject<ActionResponse> sink$ = BehaviorSubject.create();
 
