@@ -15,7 +15,7 @@ import java.util.List;
 final class Store {
     private final SubscriptionRepository subscriptionRepository;
 
-    Store(final Driver rssDriver, final Source subscription, final SubscriptionRepository subscriptionRepository) {
+    Store(final Driver rssDriver, final Source<Feed> subscription, final SubscriptionRepository subscriptionRepository) {
         this.subscriptionRepository = subscriptionRepository;
 
         Observable<ListSubscriptions> action$ = intent(rssDriver);

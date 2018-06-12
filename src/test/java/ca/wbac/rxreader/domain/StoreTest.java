@@ -39,7 +39,7 @@ public class StoreTest {
 
     private Driver driver;
     private SubscriptionRepository subscriptionRepository;
-    private Source subscription;
+    private Source<Feed> subscription;
 
     @Before
     public void setup() {

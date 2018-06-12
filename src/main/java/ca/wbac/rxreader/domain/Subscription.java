@@ -9,7 +9,7 @@ import io.vavr.control.Try;
 import org.springframework.stereotype.Component;
 
 @Component("subscription")
-final class Subscription implements Source {
+final class Subscription implements Source<Feed> {
     private final Observable<Feed> source$;
     private final RssFetcher rssFetcher;
 
